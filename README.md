@@ -5,6 +5,7 @@ R code to calculate the air-water flux of individual PCB congeners from Indiana 
 # set working directory
 setwd("Z:.../Flux")
 
+# Start functions
 
 final.result = function(MW.PCB, H0.mean, H0.error, 
          C.PCB.water.mean, C.PCB.water.error, C.PCB.air.mean, C.PCB.air.error, nOrtho.Cl)
