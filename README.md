@@ -1,8 +1,7 @@
 # PCB-flux-calculations
 R code to calculate the air-water flux of individual PCB congeners from Indiana Harbor and Ship Canal from air and water passive samples from 2007
 
-
-# set working directory
+# set working directory on our computer
 setwd("Z:.../Flux")
 
 # Start functions
@@ -10,11 +9,14 @@ setwd("Z:.../Flux")
 final.result = function(MW.PCB, H0.mean, H0.error, 
          C.PCB.water.mean, C.PCB.water.error, C.PCB.air.mean, C.PCB.air.error, nOrtho.Cl)
 {
-# fixed parameters
+
+## fixed parameters
 
 R = 8.3144
 T = 298.15
 w = 3
+
+## Monte Carlo simulation
 
 F.PCB.aw <- NULL
 for (replication in 1:1000)
@@ -25,17 +27,19 @@ for (replication in 1:1000)
 a <- rnorm(1, 0.085, 0.007)
 b <- rnorm(1, 1, 0.5)
 c <- rnorm(1, 32.7, 1.6)
-H0 <- rnorm(1, H0.mean, H0.error)
+H0 <- rnorm(1, H0.mean, H0.error) # should be normalized distribution
+
+## Specific condition for each deployment
 P <- rnorm(1, P.mean, P.error)					
 u <- abs(rnorm(1, u.mean, u.error)) #m/s
 C.PCB.water <- rnorm(1, C.PCB.water.mean, C.PCB.water.error) #ng/L
 C.PCB.air <- rnorm(1, C.PCB.air.mean, C.PCB.air.error) #ng/m3
 T.water <- rnorm(1, T.water.mean, T.water.error) #C 
 T.air <- rnorm(1, T.air.mean, T.air.error) #C
-Q <- abs(rnorm(1, Q.mean, Q.error))
+Q <- abs(rnorm(1, Q.mean, Q.error)) #m/s3
 h <- abs(rnorm(1, h.mean, h.error)) #m
 
-# computed values
+## Equations
 
 DeltaUaw <- (a*MW.PCB-b*nOrtho.Cl+c)*1000
 K <- 10^(H0)*101325/(R*T)
@@ -72,6 +76,10 @@ q97.5 <- quantile(F.PCB.aw, 0.975)
 c(mmm, sss, q2.5, q97.5)
 }
 
+# Individual chemical properties, meteorological and environmental conditions
+
+## Chemical properties (e.g., deployment 1)
+
 pars <- read.csv("Variables/Variables congenerD1.csv")
 Congener <- pars$Congener
 MW.PCB <- pars$MW.PCB
@@ -83,7 +91,9 @@ C.PCB.air.mean <- pars$C.PCB.air #ng/m3
 C.PCB.air.error <- pars$X.2
 nOrtho.Cl <- pars$nOrtho.Cl
 
-parsM <- read.csv("Meteo_param.csv")
+ ## Meteorological and environmental conditions
+
+parsM <- read.csv("Meteo_param.csv") #change number before braquets, for different deployment!
 T.air.mean <- parsM$D1[1]
 T.air.error <- parsM$X.1[1]
 T.water.mean <- parsM$D1[2]
@@ -97,6 +107,7 @@ Q.error <- parsM$X.1[5]
 h.mean <- parsM$D1[6]
 h.error <- parsM$X.1[6]
 
+# Results
 
 Num.Congener <- length(Congener)
 
@@ -109,6 +120,9 @@ for (i in 1:Num.Congener)
 
 final.result = data.frame(Congener, result)
 names(final.result) = c("Congener", "Mean", "Std", "2.5%CL", "97.5%CL")
-write.csv(final.result, row.names=F, file="Results/Net/fluxD1_2.csv")
+
+## Example for deployment 1
+
+write.csv(final.result, row.names=F, file="Results/Net/fluxD1.csv")
 
 
