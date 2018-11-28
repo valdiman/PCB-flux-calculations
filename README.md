@@ -1,4 +1,4 @@
-# Individual PCB flux calculations IHSC
+# Individual PCB flux calculations IHSC 2017
 R code to calculate the air-water flux of individual PCB congeners from Indiana Harbor and Ship Canal from air and water passive samples from 2017. It includes a Monte Carlo simulation (rep = 1000).
 
 # set working directory on our computer
